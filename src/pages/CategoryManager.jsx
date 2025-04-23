@@ -28,7 +28,7 @@ import useCategoryManager from "@/hooks/useCategoryManager";
 import CategoryTree from "@/components/CategoryTree";
 import CategoryFormDialog from "@/components/CategoryFormDialog";
 
-export default function CategoryPage() {
+export default function CategoryPage({ setAuth }) {
   const sensors = useSensors(useSensor(PointerSensor));
 
   const {
@@ -56,7 +56,7 @@ export default function CategoryPage() {
     handleDialogClose,
     handleSnackbarClose,
     handleToggleActive,
-  } = useCategoryManager();
+  } = useCategoryManager({ setAuth });
 
   return (
     <Container maxWidth="100%" sx={{ mt: 4, mb: 4, px: 2 }}>

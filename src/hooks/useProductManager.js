@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import * as productApi from "@/api/product";
 
-const useProductManager = () => {
+const useProductManager = ({ setAuth }) => {
   const [products, setProducts] = useState([]);
   const [total, setTotal] = useState(0);
 
@@ -14,6 +15,7 @@ const useProductManager = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [redirectAfterClose, setRedirectAfterClose] = useState(false);
 
   const [searchNameInput, setSearchNameInput] = useState("");
   const [searchDescriptionInput, setSearchDescriptionInput] = useState("");
@@ -116,8 +118,14 @@ const useProductManager = () => {
     setDialogOpen(false);
   };
 
+  const navigate = useNavigate();
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+    if (redirectAfterClose) {
+      navigate("/login", { replace: true });
+      setRedirectAfterClose(false);
+    }
   };
 
   const handleApiError = (error, defaultMsg = "發生錯誤，請稍後再試") => {
@@ -133,6 +141,12 @@ const useProductManager = () => {
       msg = error.response.data.message;
     } else if (error.message) {
       msg = error.message;
+    }
+
+    if (error.response.status === 401) {
+      localStorage.removeItem("token");
+      setRedirectAfterClose(true);
+      setAuth(false);
     }
 
     setErrorMessage(msg);

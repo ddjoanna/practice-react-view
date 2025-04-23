@@ -13,17 +13,15 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { Navigate } from "react-router-dom";
 import ProductTable from "@/components/ProductTable";
 import ProductFormDialog from "@/components/ProductFormDialog";
 import useProductManager from "@/hooks/useProductManager";
 
-const ProductManager = () => {
+const ProductManager = ({ setAuth }) => {
   const {
     products,
     total,
     loading,
-    error,
     editingProduct,
     page,
     rowsPerPage,
@@ -45,11 +43,7 @@ const ProductManager = () => {
     snackbarOpen,
     handleSnackbarClose,
     errorMessage,
-  } = useProductManager();
-
-  if (error === "未授權，請重新登入") {
-    return <Navigate to="/login" replace />;
-  }
+  } = useProductManager({ setAuth });
 
   return (
     <Container maxWidth="100%" sx={{ mt: 4, mb: 4, px: 2 }}>

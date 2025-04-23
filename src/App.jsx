@@ -93,13 +93,21 @@ function App() {
                   <Route
                     path="/products"
                     element={
-                      auth ? <ProductManager /> : <Navigate to="/login" />
+                      auth ? (
+                        <ProductManager setAuth={setAuth} />
+                      ) : (
+                        <Navigate to="/login" />
+                      )
                     }
                   />
                   <Route
                     path="/categories"
                     element={
-                      auth ? <CategoryManager /> : <Navigate to="/login" />
+                      auth ? (
+                        <CategoryManager setAuth={setAuth} />
+                      ) : (
+                        <Navigate to="/login" />
+                      )
                     }
                   />
                   <Route

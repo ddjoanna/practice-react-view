@@ -18,7 +18,7 @@ const Login = ({ setAuth }) => {
     e.preventDefault();
     try {
       const response = await api.post("/login", form);
-      const token = response.data.token;
+      const token = response.data.data.token;
 
       localStorage.setItem("token", token);
       document.cookie = `token=${token}; path=/`; // 將 token 存儲到 cookie

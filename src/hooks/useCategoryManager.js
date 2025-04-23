@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { arrayMove } from "@dnd-kit/sortable";
 import * as categoryApi from "@/api/category";
 
@@ -42,7 +43,7 @@ const flattenTree = (tree) => {
   return flattened;
 };
 
-export default function useCategoryManager() {
+export default function useCategoryManager({ setAuth }) {
   const [categories, setCategories] = useState([]);
   const initialized = useRef(false);
   const [initialCategories, setInitialCategories] = useState(null);
@@ -52,8 +53,10 @@ export default function useCategoryManager() {
   const [activeId, setActiveId] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+
   const [errorMessage, setErrorMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [redirectAfterClose, setRedirectAfterClose] = useState(false);
 
   const [searchNameInput, setSearchNameInput] = useState("");
   const [searchLayerInput, setSearchLayerInput] = useState("");
@@ -238,7 +241,12 @@ export default function useCategoryManager() {
       msg = error.message;
     }
 
-    console.error(msg, error);
+    if (error.response.status === 401) {
+      localStorage.removeItem("token");
+      setRedirectAfterClose(true);
+      setAuth(false);
+    }
+
     setErrorMessage(msg);
     setSnackbarOpen(true);
   };
@@ -248,8 +256,14 @@ export default function useCategoryManager() {
     setDialogOpen(false);
   };
 
+  const navigate = useNavigate();
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+    if (redirectAfterClose) {
+      navigate("/login", { replace: true });
+      setRedirectAfterClose(false);
+    }
   };
 
   const handleToggleActive = async (id, isActive) => {
